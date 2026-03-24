@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import type { Borough, MedicaidStatus } from '../types';
 
@@ -19,6 +20,7 @@ type Status = 'idle' | 'loading' | 'success' | 'error';
 const FunnelA: React.FC = () => {
   const [form, setForm] = useState({
     fullName: '',
+    email: '',
     phone: '',
     borough: 'Bronx' as Borough,
     medicaidStatus: 'Not Sure' as MedicaidStatus,
@@ -39,7 +41,7 @@ const FunnelA: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.fullName || !form.phone || !form.relationship) {
+    if (!form.fullName || !form.email || !form.phone || !form.relationship) {
       setErrorMsg('Please fill in all required fields.');
       return;
     }
@@ -52,7 +54,7 @@ const FunnelA: React.FC = () => {
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
           funnel: 'Caregiver_Leads',
-          _subject: `New CDPAP Lead — ${form.fullName} (${form.borough})`,
+          _subject: `New CDPAP Lead - ${form.fullName} (${form.borough})`,
           ...form,
           adls: form.adls.join(', '),
         }),
@@ -89,18 +91,18 @@ const FunnelA: React.FC = () => {
           CDPAP Salary & ADL Checker
         </h2>
         <p className="text-slate-600 dark:text-slate-400 text-sm max-w-lg mx-auto">
-          Are you or your caregiver being underpaid? Submit your care profile and we'll audit your current CDPAP compensation against what you're legally entitled to.
+          Are you or your caregiver being underpaid? Submit your care profile and we will audit your current CDPAP compensation against what you are legally entitled to.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5 max-w-xl mx-auto">
-        {/* Name */}
         <div>
           <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">
             Full Name <span className="text-gold-500">*</span>
           </label>
           <input
             type="text"
+            required
             value={form.fullName}
             onChange={(e) => setForm({ ...form, fullName: e.target.value })}
             placeholder="Caregiver or family member's name"
@@ -108,21 +110,35 @@ const FunnelA: React.FC = () => {
           />
         </div>
 
-        {/* Phone */}
-        <div>
-          <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">
-            Phone <span className="text-gold-500">*</span>
-          </label>
-          <input
-            type="tel"
-            value={form.phone}
-            onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            placeholder="(718) 555-0000"
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gold-500/50 text-sm"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">
+              Email <span className="text-gold-500">*</span>
+            </label>
+            <input
+              type="email"
+              required
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              placeholder="name@email.com"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gold-500/50 text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">
+              Phone <span className="text-gold-500">*</span>
+            </label>
+            <input
+              type="tel"
+              required
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              placeholder="(718) 555-0000"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gold-500/50 text-sm"
+            />
+          </div>
         </div>
 
-        {/* Borough + Medicaid row */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Borough</label>
@@ -150,13 +166,13 @@ const FunnelA: React.FC = () => {
           </div>
         </div>
 
-        {/* Relationship */}
         <div>
           <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">
             Your Relationship to the Patient <span className="text-gold-500">*</span>
           </label>
           <input
             type="text"
+            required
             value={form.relationship}
             onChange={(e) => setForm({ ...form, relationship: e.target.value })}
             placeholder="e.g. Adult Child, Spouse, Self"
@@ -164,7 +180,6 @@ const FunnelA: React.FC = () => {
           />
         </div>
 
-        {/* ADLs */}
         <div>
           <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
             ADL Requirements <span className="text-slate-400 font-normal">(select all that apply)</span>
@@ -193,15 +208,8 @@ const FunnelA: React.FC = () => {
           </div>
         </div>
 
-        {errorMsg && (
-          <p className="text-red-500 text-sm text-center">{errorMsg}</p>
-        )}
-
-        {status === 'error' && (
-          <p className="text-red-500 text-sm text-center">
-            Submission failed. Please try again or use another funnel to reach us.
-          </p>
-        )}
+        {errorMsg && <p className="text-red-500 text-sm text-center">{errorMsg}</p>}
+        {status === 'error' && <p className="text-red-500 text-sm text-center">Submission failed. Please try again.</p>}
 
         <button
           type="submit"
