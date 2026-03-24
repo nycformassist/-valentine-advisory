@@ -9,7 +9,7 @@ const PAIN_POINTS = [
   {
     icon: 'fa-sack-xmark',
     headline: 'Caregivers Are Underpaid',
-    body: 'Most CDPAP workers are earning less than they're entitled to. We audit ADL documentation and fight for correct compensation.',
+    body: "Most CDPAP workers are earning less than they're entitled to. We audit ADL documentation and fight for correct compensation.",
   },
   {
     icon: 'fa-file-circle-xmark',
