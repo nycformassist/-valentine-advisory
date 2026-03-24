@@ -16,6 +16,7 @@ type Status = 'idle' | 'loading' | 'success' | 'error';
 const FunnelC: React.FC = () => {
   const [form, setForm] = useState({
     name: '',
+    email: '',
     phone: '',
     currentAgency: '',
     category: '',
@@ -27,7 +28,7 @@ const FunnelC: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.phone || !form.category || !form.message) {
+    if (!form.name || !form.email || !form.phone || !form.category || !form.message) {
       setErrorMsg('Please fill in all required fields.');
       return;
     }
@@ -40,7 +41,7 @@ const FunnelC: React.FC = () => {
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
           funnel: 'Caregiver_Sanctuary',
-          _subject: `Sanctuary Message — ${form.category}${form.isUrgent ? ' 🚨 URGENT' : ''}`,
+          _subject: `Sanctuary Message - ${form.category}${form.isUrgent ? ' URGENT' : ''}`,
           ...form,
         }),
       });
@@ -70,29 +71,28 @@ const FunnelC: React.FC = () => {
 
   return (
     <div>
-      {/* Header with confidentiality badge */}
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 bg-purple-100 dark:bg-purple-900/20 border border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300 text-xs font-bold px-3 py-1.5 rounded-full mb-3">
           <i className="fa-solid fa-vault"></i>
-          SANCTUARY VAULT · CONFIDENTIAL
+          SANCTUARY VAULT - CONFIDENTIAL
         </div>
         <h2 className="text-2xl font-extrabold text-navy-900 dark:text-white mb-2">
           <i className="fa-solid fa-shield-heart text-gold-500 mr-2"></i>
           Caregiver Sanctuary
         </h2>
         <p className="text-slate-600 dark:text-slate-400 text-sm max-w-lg mx-auto">
-          This is a safe, private space. Whether you're burned out, fighting a bad agency, or just need someone in your corner — speak freely. Nothing here is shared without your permission.
+          This is a safe, private space. Whether you are burned out or fighting a bad agency - speak freely. Nothing here is shared without your permission.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5 max-w-xl mx-auto">
-        {/* Name */}
         <div>
           <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">
             Name or Alias <span className="text-gold-500">*</span>
           </label>
           <input
             type="text"
+            required
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             placeholder="You may use a first name only"
@@ -100,33 +100,46 @@ const FunnelC: React.FC = () => {
           />
         </div>
 
-        {/* Phone + Agency */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">
+              Email <span className="text-gold-500">*</span>
+            </label>
+            <input
+              type="email"
+              required
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              placeholder="name@email.com"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gold-500/50 text-sm"
+            />
+          </div>
           <div>
             <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">
               Phone <span className="text-gold-500">*</span>
             </label>
             <input
               type="tel"
+              required
               value={form.phone}
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
               placeholder="(718) 555-0000"
               className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gold-500/50 text-sm"
             />
           </div>
-          <div>
-            <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Current Agency</label>
-            <input
-              type="text"
-              value={form.currentAgency}
-              onChange={(e) => setForm({ ...form, currentAgency: e.target.value })}
-              placeholder="If applicable"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gold-500/50 text-sm"
-            />
-          </div>
         </div>
 
-        {/* Category */}
+        <div>
+          <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Current Agency</label>
+          <input
+            type="text"
+            value={form.currentAgency}
+            onChange={(e) => setForm({ ...form, currentAgency: e.target.value })}
+            placeholder="If applicable"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gold-500/50 text-sm"
+          />
+        </div>
+
         <div>
           <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
             What Brings You Here? <span className="text-gold-500">*</span>
@@ -150,21 +163,20 @@ const FunnelC: React.FC = () => {
           </div>
         </div>
 
-        {/* Message */}
         <div>
           <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">
             Your Message <span className="text-gold-500">*</span>
           </label>
           <textarea
+            required
             value={form.message}
             onChange={(e) => setForm({ ...form, message: e.target.value })}
             rows={4}
-            placeholder="Tell us what's happening. Be as specific or as vague as you need to be. This is confidential."
+            placeholder="Tell us what's happening. This is confidential."
             className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gold-500/50 text-sm resize-none"
           />
         </div>
 
-        {/* Urgent toggle */}
         <label className="flex items-center gap-3 cursor-pointer group">
           <div
             onClick={() => setForm({ ...form, isUrgent: !form.isUrgent })}
@@ -173,14 +185,12 @@ const FunnelC: React.FC = () => {
             <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all ${form.isUrgent ? 'left-5' : 'left-1'}`} />
           </div>
           <span className="text-sm text-slate-600 dark:text-slate-400">
-            <span className="font-bold text-red-500">Mark Urgent</span> — I need a callback today
+            <span className="font-bold text-red-500">Mark Urgent</span> - I need a callback today
           </span>
         </label>
 
         {errorMsg && <p className="text-red-500 text-sm text-center">{errorMsg}</p>}
-        {status === 'error' && (
-          <p className="text-red-500 text-sm text-center">Submission failed. Please try again.</p>
-        )}
+        {status === 'error' && <p className="text-red-500 text-sm text-center">Submission failed. Please try again.</p>}
 
         <button
           type="submit"
